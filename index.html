@@ -2267,3 +2267,13 @@ init();
 </script>
 </body>
 </html>
+
+<script>
+  var password = "1234";
+
+  var userInput = prompt("Enter password:");
+
+  if (userInput !== password) {
+    document.body.innerHTML = "<h1>Access Denied</h1>";
+  }
+</script>
