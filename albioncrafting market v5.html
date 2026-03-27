@@ -1,0 +1,2269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="author" content="Lilthorfinn">
+    <meta name="version" content="6.0-combined">
+    <title>Albion Asia Trader Pro | Lilthorfinn | Full Suite</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-primary: #0a0c12;
+            --bg-secondary: #13161f;
+            --bg-card: #1a1e2a;
+            --bg-hover: #232838;
+            --border: #2c2f3a;
+            --gold: #f0b90b;
+            --gold-dark: #b8860b;
+            --gold-glow: rgba(240, 185, 11, 0.2);
+            --profit: #6fcf97;
+            --loss: #e74c3c;
+            --warning: #f39c12;
+            --info: #3498db;
+            --text-primary: #eef2ff;
+            --text-secondary: #8e9aaf;
+            --text-muted: #5a657c;
+        }
+
+        body {
+            background: var(--bg-primary);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            color: var(--text-primary);
+            padding: 1.5rem;
+        }
+
+        .app-container { max-width: 1800px; margin: 0 auto; }
+
+        .header {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-section h1 {
+            font-size: 1.9rem;
+            background: linear-gradient(135deg, var(--gold), #ff7e5e);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+        }
+
+        .creator-badge {
+            background: linear-gradient(135deg, var(--gold-dark), #8b5a2b);
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #0a0c12;
+        }
+
+        .time-panel {
+            background: var(--bg-card);
+            padding: 0.5rem 1.2rem;
+            border-radius: 60px;
+            font-family: monospace;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            gap: 1.2rem;
+            align-items: baseline;
+            border: 1px solid var(--gold-glow);
+        }
+
+        .utc-time { color: var(--gold); letter-spacing: 1px; }
+
+        .badge {
+            background: var(--bg-card);
+            padding: 0.3rem 0.9rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--gold);
+        }
+
+        /* ---- MARKET TOOLS GRID (3 columns for flip/refine/scan) ---- */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+            gap: 1.6rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border-radius: 1.5rem;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.5);
+        }
+
+        .card-header {
+            background: var(--bg-card);
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+            font-size: 1.2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-content { padding: 1.2rem 1.5rem; }
+
+        input, select, button {
+            background: #0f111a;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 0.7rem 1rem;
+            border-radius: 0.8rem;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        input, select { width: 100%; }
+        button { cursor: pointer; font-weight: 500; }
+
+        button.primary {
+            background: var(--gold);
+            color: #0b0e16;
+            font-weight: bold;
+            border: none;
+        }
+
+        button.primary:hover { background: #ffcd4a; transform: scale(0.98); }
+
+        .flipping-item {
+            background: var(--bg-card);
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 3px solid var(--gold);
+        }
+
+        .flipping-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .flipping-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 0.8rem;
+            margin: 0.8rem 0;
+        }
+
+        .flipping-stats input { padding: 0.4rem; font-size: 0.85rem; }
+
+        .profit-positive { color: var(--profit); font-weight: bold; }
+        .profit-negative { color: var(--loss); font-weight: bold; }
+
+        .remove-item {
+            background: var(--loss);
+            padding: 0.3rem 0.8rem;
+            font-size: 0.75rem;
+            width: auto;
+            border-radius: 1rem;
+        }
+
+        .total-profit-card {
+            background: linear-gradient(135deg, #1e2a3a, #0f1119);
+            padding: 1rem;
+            border-radius: 1rem;
+            margin-top: 1rem;
+            text-align: center;
+            border: 1px solid var(--gold-glow);
+        }
+
+        .enchant-row {
+            display: flex;
+            gap: 0.5rem;
+            margin: 0.8rem 0;
+            flex-wrap: wrap;
+        }
+
+        .enchant-badge {
+            background: #2d3748;
+            padding: 0.4rem 0.8rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .enchant-badge.active { background: var(--gold); color: #0a0c12; font-weight: bold; }
+
+        .search-section { position: relative; margin-bottom: 1rem; }
+
+        .autocomplete-list {
+            background: var(--bg-card);
+            border-radius: 0.8rem;
+            max-height: 260px;
+            overflow-y: auto;
+            margin-top: 0.3rem;
+            border: 1px solid var(--border);
+            position: absolute;
+            width: 100%;
+            z-index: 100;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+        }
+
+        .autocomplete-item {
+            padding: 0.6rem 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.85rem;
+        }
+
+        .autocomplete-item:hover { background: var(--bg-hover); }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.6rem 0;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .market-data-box {
+            background: #0c0f17;
+            border-radius: 1rem;
+            padding: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .override-group {
+            background: #0c0f17;
+            padding: 0.5rem;
+            border-radius: 0.8rem;
+            margin-top: 0.5rem;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .override-group label { display: flex; align-items: center; gap: 0.3rem; font-size: 0.8rem; }
+        .override-group input { width: 80px; padding: 0.2rem; }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .help-text { font-size: 0.65rem; color: var(--text-muted); margin-top: 0.2rem; }
+
+        @media (max-width: 768px) {
+            body { padding: 0.8rem; }
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .time-panel { font-size: 0.8rem; padding: 0.3rem 0.8rem; }
+        }
+
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+        .refresh-pulse { animation: pulse 1s ease-in-out; }
+
+        /* ========== CRAFTING PLANNER STYLES ========== */
+        .section-divider {
+            border-top: 2px solid var(--border);
+            margin: 2rem 0 1.5rem 0;
+            position: relative;
+        }
+
+        .section-divider-label {
+            position: absolute;
+            top: -0.75rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-primary);
+            padding: 0 1rem;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--gold);
+            white-space: nowrap;
+        }
+
+        .planner-container { max-width: 100%; }
+
+        .planner-header-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #2a3a5a;
+            color: white;
+        }
+
+        .btn-primary { background: #4a6a3a; }
+        .btn-primary:hover { background: #5e824a; }
+        .btn-danger { background: #8b3a3a; }
+        .btn-danger:hover { background: #a54a4a; }
+        .btn-warning { background: #8b6a2a; }
+        .btn-warning:hover { background: #ad8735; }
+        .btn-info { background: #2a6a7a; }
+
+        .batches-container { display: flex; flex-direction: column; gap: 24px; }
+
+        .batch-card {
+            background: #131725;
+            border-radius: 20px;
+            padding: 20px;
+            border-left: 4px solid #ffaa33;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .batch-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .batch-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .batch-title input {
+            background: #0b0e17;
+            border: 1px solid #2e3a55;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .batch-controls { display: flex; gap: 8px; }
+
+        .batch-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .info-card {
+            background: #0f121f;
+            border-radius: 12px;
+            padding: 10px;
+        }
+
+        .info-card label {
+            display: block;
+            font-size: 0.75rem;
+            color: #8f9bb3;
+            margin-bottom: 4px;
+        }
+
+        .info-card select, .info-card input {
+            background: #1a1f2e;
+            border: 1px solid #2e3a55;
+            color: white;
+            padding: 8px;
+            border-radius: 8px;
+            width: 100%;
+            margin-top: 4px;
+        }
+
+        .material-table {
+            width: 100%;
+            margin-top: 12px;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .material-table th, .material-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #2e3a55;
+        }
+
+        .material-table th { color: #ffcc88; }
+
+        .material-table input {
+            width: 100%;
+            background: #0b0e17;
+            border: 1px solid #2e3a55;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .craft-btn {
+            background: #2c6a3a;
+            margin-top: 12px;
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+        }
+
+        .leftovers-section {
+            margin-top: 12px;
+            background: #1a2a1a;
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 0.85rem;
+        }
+
+        .batch-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .leftover-badge {
+            background: #2a5a3a;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+        }
+
+        .planner-add-mat-btn {
+            background: #2a6a7a;
+            margin-top: 8px;
+            padding: 6px 12px;
+            font-size: 0.8rem;
+        }
+
+        .inline-check {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .inline-check input { width: auto; }
+
+        /* Item Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #1e2438;
+            border-radius: 24px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 16px;
+            background: #0b0e17;
+            border: 1px solid #2e3a55;
+            color: white;
+            border-radius: 12px;
+        }
+
+        .category-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .category-btn {
+            padding: 6px 12px;
+            background: #2a3a5a;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            border: none;
+            color: white;
+        }
+
+        .category-btn.active { background: #ffaa33; color: #1e2438; }
+
+        .item-list {
+            display: grid;
+            gap: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .item-entry {
+            padding: 10px;
+            background: #0f121f;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .item-entry:hover { background: #2a3a5a; }
+        .item-name { font-weight: bold; }
+        .item-category { font-size: 0.7rem; color: #ffaa66; }
+
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+        }
+
+        /* ===== TRANSPORTATION TIMER STYLES ===== */
+        .transport-section {
+            margin: 2rem 0;
+        }
+
+        .transport-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .transport-timer-card {
+            background: #131725;
+            border-radius: 1.2rem;
+            border: 1px solid #2e3a55;
+            border-left: 4px solid #3498db;
+            padding: 1rem 1.2rem;
+            position: relative;
+            transition: box-shadow 0.2s;
+        }
+
+        .transport-timer-card.done {
+            border-left-color: var(--profit);
+            box-shadow: 0 0 14px rgba(111, 207, 151, 0.2);
+            animation: arrival-glow 1s ease-in-out;
+        }
+
+        .transport-timer-card.warning {
+            border-left-color: var(--warning);
+        }
+
+        @keyframes arrival-glow {
+            0% { box-shadow: 0 0 0px rgba(111,207,151,0); }
+            50% { box-shadow: 0 0 28px rgba(111,207,151,0.5); }
+            100% { box-shadow: 0 0 14px rgba(111,207,151,0.2); }
+        }
+
+        .transport-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.7rem;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .transport-route {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .transport-countdown {
+            font-family: monospace;
+            font-size: 1.6rem;
+            font-weight: bold;
+            text-align: center;
+            padding: 0.4rem 0;
+            color: #3498db;
+            letter-spacing: 2px;
+            transition: color 0.3s;
+        }
+
+        .transport-countdown.urgent { color: var(--warning); }
+        .transport-countdown.done { color: var(--profit); }
+
+        .transport-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            margin-top: 0.4rem;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+        }
+
+        .transport-progress {
+            height: 5px;
+            background: #1e2a3a;
+            border-radius: 10px;
+            margin-top: 0.6rem;
+            overflow: hidden;
+        }
+
+        .transport-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #6fcf97);
+            border-radius: 10px;
+            transition: width 1s linear;
+        }
+
+        .transport-add-panel {
+            background: #0f121f;
+            border-radius: 1.2rem;
+            padding: 1.2rem;
+            border: 1px dashed #2e3a55;
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+        }
+
+        .transport-add-panel h4 {
+            font-size: 0.9rem;
+            color: var(--gold);
+            margin-bottom: 0.3rem;
+        }
+
+        .transport-input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.6rem;
+        }
+
+        .transport-input-row .t-label {
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.2rem;
+        }
+
+        .transport-input-row input, .transport-input-row select {
+            font-size: 0.82rem;
+            padding: 0.5rem 0.7rem;
+        }
+
+        .transport-btn-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.3rem;
+        }
+
+        .transport-tag {
+            display: inline-block;
+            padding: 0.15rem 0.55rem;
+            border-radius: 20px;
+            font-size: 0.68rem;
+            font-weight: bold;
+        }
+
+        .tag-transit { background: #1a3a5c; color: #3498db; }
+        .tag-done    { background: #1a3a2a; color: #6fcf97; }
+        .tag-waiting { background: #3a3a1a; color: #f0b90b; }
+
+        .timer-status-badge {
+            font-size: 0.65rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 1rem;
+            background: #1a2a3a;
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        .timer-status-badge.done { background: #1a3a2a; color: #6fcf97; }
+
+        /* ===== REFINE BATCH STYLES ===== */
+        .refine-batch-container {
+            margin-top: 1rem;
+        }
+
+        .refine-batch-item {
+            background: #0f121f;
+            border-radius: 1rem;
+            border-left: 3px solid #3498db;
+            padding: 0.9rem;
+            margin-bottom: 0.8rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr 0.8fr auto;
+            gap: 0.6rem;
+            align-items: center;
+        }
+
+        .refine-batch-item label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            display: block;
+            margin-bottom: 0.2rem;
+        }
+
+        .refine-batch-item input, .refine-batch-item select {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.6rem;
+        }
+
+        .refine-batch-result {
+            font-size: 0.78rem;
+            line-height: 1.5;
+            color: var(--text-secondary);
+        }
+
+        .refine-batch-result .rb-profit { font-weight: bold; font-size: 0.85rem; }
+
+        .refine-total-summary {
+            background: linear-gradient(135deg, #1a2a1a, #0f1a10);
+            border-radius: 1rem;
+            border: 1px solid rgba(111,207,151,0.2);
+            padding: 1rem 1.2rem;
+            margin-top: 0.8rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 0.8rem;
+            text-align: center;
+        }
+
+        .refine-total-summary .rts-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.2rem;
+        }
+
+        .refine-total-summary .rts-val {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--gold);
+        }
+
+        @media (max-width: 600px) {
+            .refine-batch-item { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+
+    <!-- ===== HEADER ===== -->
+    <div class="header">
+        <div class="logo-section">
+            <h1>⚔️ ALBION ASIA TRADER PRO</h1>
+            <div style="font-size:0.75rem; margin-top: 4px;">Market Suite + Realistic Crafting Planner</div>
+            <div class="creator-badge" style="margin-top: 6px; display: inline-block;">👑 Created by Lilthorfinn</div>
+        </div>
+        <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <div class="time-panel">
+                <span>🕒 UTC</span>
+                <span class="utc-time" id="utcClock">--:--:--</span>
+            </div>
+            <div class="badge">🔥 Full Suite | Transport Timers | Multi-Batch Refining</div>
+        </div>
+    </div>
+
+    <!-- ===== MARKET TOOLS (3 cards) ===== -->
+    <div class="dashboard-grid">
+
+        <!-- MULTI-ITEM FLIPPING -->
+        <div class="card">
+            <div class="card-header">💰 Multi-Item Flipping Suite <span style="font-size:0.7rem;">Portfolio Analysis</span></div>
+            <div class="card-content">
+                <div id="flippingItemsList"></div>
+                <button id="addFlippingItemBtn" class="primary" style="width: 100%; margin-top: 0.5rem;">+ Add Another Item</button>
+                <div class="total-profit-card">
+                    <div style="font-size:0.85rem; font-weight:bold;">📊 TOTAL PORTFOLIO</div>
+                    <div style="font-size:2rem; font-weight:bold; margin-top: 0.3rem;" id="totalPortfolioProfit">0</div>
+                    <div style="font-size:0.8rem;" id="avgProfitMargin">Average margin: --</div>
+                    <div style="font-size:0.75rem; margin-top: 0.3rem;" id="totalInvestment">Total investment: --</div>
+                    <div style="font-size:0.7rem; margin-top: 0.2rem;" id="winRate">Win rate: --</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- REFINING OPTIMIZER -->
+        <div class="card">
+            <div class="card-header">🏭 Refining Optimizer <span style="font-size:0.7rem;">City or Custom Bonus</span></div>
+            <div class="card-content">
+                <div class="form-label">📦 Raw Resource</div>
+                <select id="refineResourceSelect"></select>
+                <div style="margin: 0.8rem 0;">
+                    <div class="form-label">🏙️ Refining City (or use override)</div>
+                    <select id="refineCitySelect">
+                        <option value="Martlock">Martlock (Hide +15.2%)</option>
+                        <option value="Lymhurst">Lymhurst (Fiber +15.2%)</option>
+                        <option value="Thetford">Thetford (Ore +15.2%)</option>
+                        <option value="Bridgewatch">Bridgewatch (Stone +15.2%)</option>
+                        <option value="Fort Sterling">Fort Sterling (Wood +15.2%)</option>
+                        <option value="Caerleon">Caerleon (All +15.2%)</option>
+                        <option value="Brecilien">Brecilien (All +10%)</option>
+                    </select>
+                </div>
+                <div class="override-group">
+                    <label><input type="checkbox" id="refineOverrideToggle"> 🔧 Override with custom %</label>
+                    <input type="number" id="refineCustomPercent" placeholder="Bonus %" step="0.1" min="0" max="100" value="15.2">
+                    <span style="font-size:0.7rem;">(e.g., 15.2 = 15.2% return)</span>
+                </div>
+                <div style="margin: 0.8rem 0;">
+                    <div class="form-label">✨ Enchantment Level (value multiplier):</div>
+                    <div class="enchant-row" id="enchantSelector">
+                        <div class="enchant-badge" data-enchant="0">.0 (1.0x)</div>
+                        <div class="enchant-badge" data-enchant="1">.1 (1.25x)</div>
+                        <div class="enchant-badge" data-enchant="2">.2 (1.5x)</div>
+                        <div class="enchant-badge" data-enchant="3">.3 (2.0x)</div>
+                        <div class="enchant-badge" data-enchant="4">.4 (3.0x)</div>
+                    </div>
+                </div>
+                <div style="display:flex; gap:0.8rem; margin: 0.8rem 0;">
+                    <div style="flex:2;">
+                        <div class="form-label">📊 Raw Resource Amount</div>
+                        <input type="number" id="rawQty" placeholder="Raw resource amount" value="1000">
+                    </div>
+                </div>
+                <div style="margin: 0.8rem 0;">
+                    <label style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="focusToggle"> 🎯 Focus (extra +15% return rate)
+                    </label>
+                </div>
+                <button id="calcRefineBtn" class="primary" style="width: 100%;">Calculate Refining Profit</button>
+                <div id="refineResult" style="margin-top: 12px; background:#0e111b; border-radius: 1rem; padding: 0.8rem; font-size: 0.85rem;"></div>
+
+                <!-- ===== MULTI-BATCH REFINING ===== -->
+                <div style="margin-top: 1.2rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">
+                        <div class="form-label" style="margin:0; font-size:0.9rem; color: var(--gold);">🔁 Multi-Batch Refining</div>
+                        <button id="addRefineBatchBtn" class="primary" style="padding: 0.35rem 0.8rem; font-size: 0.75rem;">+ Add Batch</button>
+                    </div>
+                    <div class="help-text" style="margin-bottom: 0.7rem;">Add multiple refining batches — each uses the same city/focus/enchant settings above. Calculates totals across all batches.</div>
+                    <div id="refineBatchContainer" class="refine-batch-container"></div>
+                    <div id="refineBatchTotal" class="refine-total-summary" style="display:none;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MARKET SCANNER -->
+        <div class="card">
+            <div class="card-header">📊 Real-time Market Scanner <span style="font-size:0.7rem;">All Cities</span></div>
+            <div class="card-content">
+                <div class="search-section">
+                    <div class="form-label">🔍 Search Item</div>
+                    <input type="text" id="itemSearch" placeholder="Search any item..." autocomplete="off">
+                    <div id="autocompleteDropdown" class="autocomplete-list" style="display: none;"></div>
+                </div>
+                <div style="display: flex; gap: 0.5rem; margin: 1rem 0;">
+                    <div style="flex:2;">
+                        <div class="form-label">🏙️ City</div>
+                        <select id="citySelect">
+                            <option value="Martlock">🏰 Martlock</option>
+                            <option value="Lymhurst">🌲 Lymhurst</option>
+                            <option value="Bridgewatch">🏜️ Bridgewatch</option>
+                            <option value="Thetford">⚡ Thetford</option>
+                            <option value="Fort Sterling">❄️ Fort Sterling</option>
+                            <option value="Caerleon">💀 Caerleon</option>
+                            <option value="Brecilien">🌿 Brecilien</option>
+                        </select>
+                    </div>
+                    <label style="display: flex; align-items: center; gap: 8px; margin-top: 1.5rem;">
+                        <input type="checkbox" id="blackMarketToggle"> 🖤 Black Market
+                    </label>
+                </div>
+                <div class="market-data-box">
+                    <div class="price-row"><span>📦 Item:</span><span id="selectedItemName" style="font-weight:bold;">—</span></div>
+                    <div class="price-row"><span>💰 Buy Price (Max):</span><span id="buyPriceVal">—</span></div>
+                    <div class="price-row"><span>💸 Sell Price (Min):</span><span id="sellPriceVal">—</span></div>
+                    <div class="price-row"><span>📊 Spread:</span><span id="spreadVal">—</span></div>
+                    <div class="price-row"><span>🕒 Last Update:</span><span id="lastUpdate">—</span></div>
+                    <div style="display: flex; gap: 8px; margin-top: 8px; font-size: 0.7rem;">
+                        <span>🔄 Auto-refresh: <span id="countdownTimer">45s</span></span>
+                        <button id="forceRefreshBtn" style="width: auto; padding: 0.2rem 0.6rem;">↻ Now</button>
+                    </div>
+                    <button id="multiCityBtn" class="primary" style="margin-top: 12px; width: 100%;">🌍 Multi-City Comparison</button>
+                </div>
+                <div id="multiCityResult" style="margin-top: 12px; font-size:0.75rem; max-height: 150px; overflow-y: auto;"></div>
+            </div>
+        </div>
+
+    </div><!-- /dashboard-grid -->
+
+    <!-- ===== TRANSPORTATION TIMER SECTION ===== -->
+    <div class="section-divider">
+        <span class="section-divider-label">🚚 Transportation Timer — Multi-Route Tracking</span>
+    </div>
+
+    <div class="transport-section">
+        <div style="display: flex; gap: 10px; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 1rem;">
+            <div style="font-size: 0.82rem; color: var(--text-secondary);">Track cargo transport times between cities. Timers run in real time and alert when shipments arrive.</div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button class="btn" id="clearDoneTimersBtn" style="background:#4a2a2a; font-size:0.78rem; padding:7px 14px;">🗑️ Clear Done</button>
+                <button class="btn" id="clearAllTimersBtn" style="background:#3a2a1a; font-size:0.78rem; padding:7px 14px;">✖ Clear All</button>
+            </div>
+        </div>
+
+        <div class="transport-grid" id="transportGrid">
+
+            <!-- Add Timer Panel (always visible) -->
+            <div class="transport-add-panel" id="addTimerPanel">
+                <h4>➕ Add New Transport Timer</h4>
+                <div class="transport-input-row">
+                    <div>
+                        <div class="t-label">📦 Cargo / Item</div>
+                        <input type="text" id="timerCargoInput" placeholder="e.g. T6 Ore, Fiber..." style="width:100%;">
+                    </div>
+                    <div>
+                        <div class="t-label">🚚 Transport Type</div>
+                        <select id="timerTypeSelect" style="width:100%;">
+                            <option value="oxcart">🐂 Oxcart (~8 min)</option>
+                            <option value="horse">🐴 Horse (~5 min)</option>
+                            <option value="laborer">📦 Laborer Run (~15 min)</option>
+                            <option value="custom">⏱️ Custom duration</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="transport-input-row">
+                    <div>
+                        <div class="t-label">🏙️ From City</div>
+                        <select id="timerFromCity" style="width:100%;">
+                            <option>Martlock</option>
+                            <option>Lymhurst</option>
+                            <option>Bridgewatch</option>
+                            <option>Thetford</option>
+                            <option>Fort Sterling</option>
+                            <option>Caerleon</option>
+                            <option>Brecilien</option>
+                            <option>Black Market</option>
+                        </select>
+                    </div>
+                    <div>
+                        <div class="t-label">🏙️ To City</div>
+                        <select id="timerToCity" style="width:100%;">
+                            <option>Caerleon</option>
+                            <option>Martlock</option>
+                            <option>Lymhurst</option>
+                            <option>Bridgewatch</option>
+                            <option>Thetford</option>
+                            <option>Fort Sterling</option>
+                            <option>Brecilien</option>
+                            <option>Black Market</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="transport-input-row" id="customDurationRow" style="display:none;">
+                    <div>
+                        <div class="t-label">⏱️ Duration (minutes)</div>
+                        <input type="number" id="timerCustomMinutes" placeholder="Minutes" min="1" max="999" value="10" style="width:100%;">
+                    </div>
+                    <div>
+                        <div class="t-label">🔔 Alert at (seconds left)</div>
+                        <input type="number" id="timerAlertAt" placeholder="Alert at secs" value="60" min="0" style="width:100%;">
+                    </div>
+                </div>
+                <div>
+                    <div class="t-label">📝 Notes (optional)</div>
+                    <input type="text" id="timerNotes" placeholder="e.g. 500x T6 Ore, sell at BM..." style="width:100%;">
+                </div>
+                <div class="transport-btn-row">
+                    <button class="primary" id="startTimerBtn" style="flex:1; padding:0.5rem; font-size:0.85rem;">🚀 Start Timer</button>
+                    <button class="btn btn-info" id="refineTimerLinkBtn" style="flex:1; padding:0.5rem; font-size:0.78rem;">🔗 Link to Refine Batch</button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Refine Batch Link Modal -->
+        <div id="refineLinkModal" style="display:none; position:fixed; top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:2000;justify-content:center;align-items:center;">
+            <div style="background:#1e2438;border-radius:20px;max-width:500px;width:90%;padding:20px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+                    <h3 style="color:var(--gold);">🔗 Link Timer to Refine Batch</h3>
+                    <button class="btn" id="closeRefineLinkModal" style="background:#4a2a2a;padding:4px 10px;">✖</button>
+                </div>
+                <div style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:12px;">Select a refine batch to attach a transport timer automatically. The timer duration is set to your transport type.</div>
+                <div id="refineLinkBatchList" style="display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== CRAFTING PLANNER SECTION ===== -->
+    <div class="section-divider">
+        <span class="section-divider-label">⚒️ Realistic Crafting Planner — Multi-Batch · Tiers 2–8 · Leftover Tracking</span>
+    </div>
+
+    <div class="planner-container">
+        <div class="planner-header-actions">
+            <button class="btn btn-primary" id="addBatchBtn">+ Add New Batch</button>
+            <button class="btn btn-info" id="clearAllBatchesBtn">🗑️ Clear All Batches</button>
+            <button class="btn btn-warning" id="addFromLeftoversBtn">♻️ Add Batch from Leftovers</button>
+        </div>
+
+        <div id="batchesContainer" class="batches-container"></div>
+
+        <!-- Global Leftovers -->
+        <div style="margin-top: 30px; background: #0f121f; border-radius: 20px; padding: 16px;">
+            <h3>📦 Global Leftover Inventory (Returned Materials)</h3>
+            <div id="globalLeftovers" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;"></div>
+            <div style="margin-top: 12px;">
+                <button class="btn" id="clearLeftoversBtn" style="background:#4a2a2a;">Clear All Leftovers</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Item Selection Modal -->
+    <div id="itemModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Select Item to Craft</h3>
+                <button class="btn" id="closeModalBtn" style="background:#4a2a2a;">✖</button>
+            </div>
+            <input type="text" id="searchItemsInput" class="search-input" placeholder="Search items...">
+            <div class="category-filters" id="categoryFilters"></div>
+            <div id="itemListContainer" class="item-list"></div>
+        </div>
+    </div>
+
+    <footer>
+        <div>🏆 Albion Asia Trader Pro v6.1 — Combined Edition | Full Labeled Interface</div>
+        <div>👑 Created by Lilthorfinn | Market Flipping · Refining · Scanner · Realistic Crafting Planner · Transport Timers</div>
+        <div>⚡ Auto-refresh every 45s | Real Market Data | T1–T8 + Enchants | Multi-Batch Crafting & Refining | Transport Timer Tracker</div>
+    </footer>
+</div><!-- /app-container -->
+
+<script>
+// ============================================================
+// PART 1 — MARKET MACHINE (Flipping, Refining, Market Scanner)
+// ============================================================
+console.log("%c🏆 Albion Asia Trader Pro v6.0 (Combined Edition)", "color: #f0b90b; font-size: 16px; font-weight: bold");
+console.log("%c👑 Created by Lilthorfinn", "color: #6fcf97; font-size: 14px");
+
+// ---- Item Database for Market Scanner / Flipping ----
+const WEAPON_LINES = {
+    Swords: ["Broadsword","Claymore","Dual Swords","Clarent Blade","Carving Sword","Galatine Pair","Kingmaker","Sword of Valor"],
+    Axes: ["Battleaxe","Greataxe","Halberd","Carrioncaller","Infernal Scythe","Bear Paws","Realm Breaker"],
+    Maces: ["Mace","Heavy Mace","Morning Star","Camlann Mace","Bedrock Mace","Grovekeeper"],
+    Hammers: ["Hammer","Polehammer","Great Hammer","Tombhammer","Forge Hammers","Hand of Justice"],
+    Daggers: ["Dagger","Dagger Pair","Claws","Bloodletter","Demonfang","Bridled Fury","Deathgivers"],
+    Spears: ["Spear","Pike","Glaive","Heron Spear","Trinity Spear","Spirithunter","Daybreaker"],
+    Bows: ["Bow","Warbow","Longbow","Whispering Bow","Wailing Bow","Bow of Badon","Mistpiercer"],
+    Crossbows: ["Crossbow","Heavy Crossbow","Light Crossbow","Weeping Repeater","Boltcasters","Siegebow","Ravenstrike"],
+    FireStaff: ["Fire Staff","Great Fire Staff","Infernal Staff","Blazing Staff","Brimstone Staff","Dawnsong","Wildfire Staff"],
+    FrostStaff: ["Frost Staff","Great Frost Staff","Glacial Staff","Icicle Staff","Permafrost Prism","Hoarfrost"],
+    ArcaneStaff: ["Arcane Staff","Great Arcane Staff","Enigmatic Staff","Occult Staff","Witchwork Staff","Lifeforce Staff"],
+    HolyStaff: ["Holy Staff","Great Holy Staff","Divine Staff","Fallen Staff","Lifetouch Staff","Hallowed Staff"],
+    NatureStaff: ["Nature Staff","Great Nature Staff","Wild Staff","Rampant Staff","Blight Staff","Ironroot Staff"],
+    CursedStaff: ["Cursed Staff","Great Cursed Staff","Lifecurse Staff","Damnation Staff","Shadowcaller","Cursed Skull"],
+    Shapeshifter: ["Werewolf Staff","Bear Paws","Panther Staff","Eagle Staff","Imp Staff","Golem Staff","Dawnbird Staff"],
+    Quarterstaff: ["Quarterstaff","Iron-clad Staff","Double Bladed Staff","Black Monk Staff","Soulscythe","Staff of Balance","Grailseeker"]
+};
+
+const ARMOR = {
+    Cloth: ["Scholar Robe","Cleric Robe","Mage Robe","Royal Robe","Druid Robe","Feyscale Robe","Mistwalker Robe"],
+    Leather: ["Mercenary Jacket","Hunter Jacket","Assassin Jacket","Royal Jacket","Stalker Jacket","Hellion Jacket"],
+    Plate: ["Soldier Armor","Knight Armor","Guardian Armor","Royal Armor","Judicator Armor","Avalonian Armor"]
+};
+
+const EQUIPMENT = {
+    Bags: Array.from({length:8},(_,i)=>`T${i+1} Bag`),
+    Capes: [...Array.from({length:8},(_,i)=>`T${i+1} Cape`),"Thetford Cape","Martlock Cape","Fort Sterling Cape","Bridgewatch Cape","Lymhurst Cape","Caerleon Cape","Avalonian Cape","Brecilien Cape"],
+    Tools: ["Pickaxe","Axe","Skinning Knife","Sickle","Hammer","Fishing Rod"].flatMap(t=>Array.from({length:8},(_,i)=>`T${i+1} ${t}`)),
+    Mounts: ["T3 Horse","T4 Horse","T5 Horse","T6 Horse","T7 Horse","T8 Horse","Ox","Stag","Swamp Dragon","Direwolf","Salamander","Frost Ram","Specter Wolf","Nightmare","Spectral Boar","Elite Boar","Bear","Moabird","Panther","Riding Horse"]
+};
+
+const RESOURCES = ["Wood","Ore","Fiber","Hide","Stone"].flatMap(r=>Array.from({length:8},(_,i)=>`T${i+1}_${r}`));
+const REFINED = ["Planks","Metal Bars","Cloth","Leather","Stone Blocks"].flatMap(r=>Array.from({length:8},(_,i)=>`T${i+1}_${r.replace(" ","")}`));
+const CONSUMABLES = ["T3 Fish","T5 Stew","T7 Omelette","T8 Soup","Healing Potion","Energy Potion","Resistance Potion","Gigantify Potion","Invisibility Potion","Poison Potion","Sticky Potion"];
+
+function buildFullItemList() {
+    let finalSet = new Set();
+    const equipmentClasses = [];
+    for (let cat in WEAPON_LINES) equipmentClasses.push(...WEAPON_LINES[cat]);
+    for (let cat in ARMOR) equipmentClasses.push(...ARMOR[cat]);
+    equipmentClasses.push(...EQUIPMENT.Bags,...EQUIPMENT.Capes,...EQUIPMENT.Tools,...EQUIPMENT.Mounts);
+    for (let base of equipmentClasses) {
+        for (let t=1;t<=8;t++) {
+            if (t<=3) { finalSet.add(`${base} T${t}`); }
+            else { for (let e of [0,1,2,3,4]) { finalSet.add(`${base} T${t}${e===0?"":`.${e}`}`); } }
+        }
+    }
+    RESOURCES.forEach(r=>finalSet.add(r));
+    REFINED.forEach(r=>finalSet.add(r));
+    CONSUMABLES.forEach(c=>finalSet.add(c));
+    return Array.from(finalSet).sort();
+}
+
+const ALL_ITEMS = buildFullItemList();
+console.log(`✅ Market item list: ${ALL_ITEMS.length} items`);
+
+// ---- API Helper ----
+let apiCache = new Map();
+async function fetchPrices(itemNames, city, blackmarket=false) {
+    if (!itemNames.length) return [];
+    const cacheKey = `${itemNames.join(",")}_${city}_${blackmarket}`;
+    if (apiCache.has(cacheKey) && Date.now()-apiCache.get(cacheKey).timestamp < 30000)
+        return apiCache.get(cacheKey).data;
+    const query = itemNames.slice(0,10).join(",");
+    let url = `https://www.albion-online-data.com/api/v2/stats/prices/${encodeURIComponent(query)}?locations=${city}`;
+    if (blackmarket) url += `&qualities=1`;
+    try {
+        const res = await fetch(url);
+        const data = await res.json();
+        apiCache.set(cacheKey,{data:Array.isArray(data)?data:[],timestamp:Date.now()});
+        return Array.isArray(data)?data:[];
+    } catch(e) { console.error("API Error:",e); return []; }
+}
+
+// ---- FLIPPING ----
+let nextFlipId = 1;
+const flippingItems = new Map();
+
+function calculateSingleFlip(flipId) {
+    const buy = parseFloat(document.getElementById(`flipBuy_${flipId}`)?.value)||0;
+    const sell = parseFloat(document.getElementById(`flipSell_${flipId}`)?.value)||0;
+    const qty = parseFloat(document.getElementById(`flipQty_${flipId}`)?.value)||0;
+    const tax = parseFloat(document.getElementById(`flipTax_${flipId}`)?.value)||4.5;
+    let profit=0,margin=0,cost=0;
+    if (buy>0&&sell>0&&qty>0) {
+        const revenue = sell*qty*(1-tax/100);
+        cost = buy*qty;
+        profit = revenue-cost;
+        margin = (profit/cost)*100;
+    }
+    const resultDiv = document.getElementById(`flipResult_${flipId}`);
+    if (resultDiv) {
+        const profitClass = profit>=0?'profit-positive':'profit-negative';
+        resultDiv.innerHTML = `💰 Profit: <span class="${profitClass}">${profit.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,",")} silver</span> | Margin: ${margin.toFixed(1)}%`;
+    }
+    return {profit,margin,cost};
+}
+
+function updateTotalPortfolio() {
+    let totalProfit=0,totalCost=0,profitableItems=0,totalItems=0;
+    for (let [flipId] of flippingItems) {
+        const buy = parseFloat(document.getElementById(`flipBuy_${flipId}`)?.value)||0;
+        const sell = parseFloat(document.getElementById(`flipSell_${flipId}`)?.value)||0;
+        const qty = parseFloat(document.getElementById(`flipQty_${flipId}`)?.value)||0;
+        const tax = parseFloat(document.getElementById(`flipTax_${flipId}`)?.value)||4.5;
+        if (buy>0&&sell>0&&qty>0) {
+            const revenue = sell*qty*(1-tax/100);
+            const cost = buy*qty;
+            const profit = revenue-cost;
+            totalProfit+=profit; totalCost+=cost; totalItems++;
+            if (profit>0) profitableItems++;
+        }
+    }
+    const avgMargin = totalCost>0?(totalProfit/totalCost)*100:0;
+    const winRate = totalItems>0?(profitableItems/totalItems)*100:0;
+    document.getElementById('totalPortfolioProfit').innerHTML = `${totalProfit.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,",")} silver`;
+    document.getElementById('avgProfitMargin').innerHTML = `Average margin: ${avgMargin.toFixed(1)}% ${avgMargin>=0?'✅':'⚠️'}`;
+    document.getElementById('totalInvestment').innerHTML = `Total investment: ${totalCost.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,",")} silver`;
+    document.getElementById('winRate').innerHTML = `Win rate: ${winRate.toFixed(0)}% (${profitableItems}/${totalItems})`;
+    const profitSpan = document.getElementById('totalPortfolioProfit');
+    if (profitSpan) profitSpan.style.color = totalProfit>=0?'#6fcf97':'#e74c3c';
+}
+
+function attachFlipEvents(flipId) {
+    ['flipBuy','flipSell','flipQty','flipTax'].forEach(f => {
+        const el = document.getElementById(`${f}_${flipId}`);
+        if (el) el.addEventListener('input',()=>{ calculateSingleFlip(flipId); updateTotalPortfolio(); });
+    });
+}
+
+function setupFlipAutocomplete(inputId, flipId) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    const dropdownId = `flipAutocomplete_${flipId}`;
+    let dropdown = document.getElementById(dropdownId);
+    if (!dropdown) {
+        dropdown = document.createElement('div');
+        dropdown.id = dropdownId;
+        dropdown.className = 'autocomplete-list';
+        dropdown.style.display = 'none';
+        input.parentNode.appendChild(dropdown);
+    }
+    input.addEventListener('input',(e)=>{
+        const val = e.target.value;
+        if (!val.trim()) { dropdown.style.display='none'; return; }
+        const matches = ALL_ITEMS.filter(i=>i.toLowerCase().includes(val.toLowerCase())).slice(0,20);
+        if (matches.length) {
+            dropdown.innerHTML = matches.map(m=>`<div class="autocomplete-item">${m}</div>`).join('');
+            dropdown.style.display='block';
+            dropdown.querySelectorAll('.autocomplete-item').forEach(el=>{
+                el.addEventListener('click',()=>{ input.value=el.innerText; dropdown.style.display='none'; });
+            });
+        } else dropdown.style.display='none';
+    });
+    document.addEventListener('click',(e)=>{ if(!input.contains(e.target)&&!dropdown.contains(e.target)) dropdown.style.display='none'; });
+}
+
+function addFlippingItem() {
+    const container = document.getElementById('flippingItemsList');
+    const flipId = nextFlipId++;
+    const itemHtml = `
+        <div class="flipping-item" id="flippingItem_${flipId}">
+            <div class="flipping-header">
+                <strong>📦 Item ${flipId}</strong>
+                <button class="remove-item" data-flip-id="${flipId}">Remove</button>
+            </div>
+            <div class="search-section">
+                <div class="form-label">Item Name</div>
+                <input type="text" id="flipSearch_${flipId}" placeholder="Item name...">
+            </div>
+            <div class="flipping-stats">
+                <div>
+                    <div class="form-label">💰 Buy Price</div>
+                    <input type="number" id="flipBuy_${flipId}" value="1000">
+                </div>
+                <div>
+                    <div class="form-label">💸 Sell Price</div>
+                    <input type="number" id="flipSell_${flipId}" value="1500">
+                </div>
+                <div>
+                    <div class="form-label">📦 Quantity</div>
+                    <input type="number" id="flipQty_${flipId}" value="1">
+                </div>
+                <div>
+                    <div class="form-label">🏦 Tax%</div>
+                    <input type="number" id="flipTax_${flipId}" value="4.5" step="0.5">
+                </div>
+            </div>
+            <div id="flipResult_${flipId}">💰 Profit: --</div>
+        </div>`;
+    container.insertAdjacentHTML('beforeend', itemHtml);
+    flippingItems.set(flipId, true);
+    setupFlipAutocomplete(`flipSearch_${flipId}`, flipId);
+    attachFlipEvents(flipId);
+    document.querySelector(`#flippingItem_${flipId} .remove-item`).addEventListener('click',()=>{
+        document.getElementById(`flippingItem_${flipId}`).remove();
+        flippingItems.delete(flipId);
+        updateTotalPortfolio();
+    });
+    calculateSingleFlip(flipId);
+    updateTotalPortfolio();
+}
+
+// ---- REFINING ----
+const refineCityBonuses = {
+    Martlock:{hide:0.152}, Lymhurst:{fiber:0.152}, Thetford:{ore:0.152},
+    Bridgewatch:{stone:0.152}, "Fort Sterling":{wood:0.152},
+    Caerleon:{all:0.152}, Brecilien:{all:0.10}
+};
+function getCityReturnRate(resource, city) {
+    const resType = resource.split('_')[1];
+    const bonus = refineCityBonuses[city];
+    if (!bonus) return 0;
+    if (bonus.all) return bonus.all;
+    if (bonus[resType?.toLowerCase()]) return bonus[resType.toLowerCase()];
+    return 0;
+}
+let selectedRefineEnchant = 0;
+const refineMultipliers = {0:1.0,1:1.25,2:1.5,3:2.0,4:3.0};
+
+function updateRefiningCalculation() {
+    const resource = document.getElementById('refineResourceSelect').value;
+    const rawQty = parseFloat(document.getElementById('rawQty').value)||0;
+    const override = document.getElementById('refineOverrideToggle').checked;
+    let cityReturn = 0;
+    if (override) {
+        cityReturn = parseFloat(document.getElementById('refineCustomPercent').value)/100;
+        if (isNaN(cityReturn)) cityReturn = 0;
+    } else {
+        const city = document.getElementById('refineCitySelect').value;
+        cityReturn = getCityReturnRate(resource, city);
+    }
+    const focusBonus = document.getElementById('focusToggle').checked?0.15:0;
+    const totalReturn = Math.min(cityReturn+focusBonus, 0.45);
+    const returnAmount = rawQty*totalReturn;
+    const refinedOutput = rawQty*0.85+returnAmount;
+    const enchantValue = refineMultipliers[selectedRefineEnchant];
+    const baseValuePerUnit = 85;
+    const totalValue = refinedOutput*baseValuePerUnit*enchantValue;
+    const rawCost = rawQty*42;
+    const profit = totalValue-rawCost;
+    const profitMargin = rawCost>0?(profit/rawCost)*100:0;
+    const enchantNames = {0:'Normal (.0)',1:'Uncommon (.1)',2:'Rare (.2)',3:'Exceptional (.3)',4:'Pristine (.4)'};
+    document.getElementById('refineResult').innerHTML = `
+        <div><strong>✨ ${enchantNames[selectedRefineEnchant]}</strong> (${enchantValue}x value)</div>
+        <div>🏙️ Bonus: ${Math.round(totalReturn*100)}% return (${override?'custom':'city'})</div>
+        <div>📦 ${rawQty.toLocaleString()} raw → ${Math.floor(refinedOutput).toLocaleString()} refined</div>
+        <div>💰 Value: ${Math.floor(totalValue).toLocaleString()} silver | Raw cost: ${Math.floor(rawCost).toLocaleString()}</div>
+        <div><span class="${profit>=0?'profit-positive':'profit-negative'}">📊 Profit: ${Math.floor(profit).toLocaleString()} silver (${profitMargin.toFixed(1)}%)</span></div>
+    `;
+}
+
+// ---- MARKET SCANNER ----
+let refreshCountdown = 45, refreshInterval;
+
+async function refreshMarketData() {
+    const item = document.getElementById('itemSearch').value.trim();
+    if (!item) return;
+    const city = document.getElementById('citySelect').value;
+    const bm = document.getElementById('blackMarketToggle').checked;
+    const data = await fetchPrices([item], city, bm);
+    const nowStr = new Date().toISOString().slice(11,19);
+    if (data && data[0]) {
+        const buy = data[0].buy_price_max||0, sell = data[0].sell_price_min||0;
+        const spread = sell-buy, spreadPercent = buy?(spread/buy)*100:0;
+        document.getElementById('selectedItemName').innerText = item;
+        document.getElementById('buyPriceVal').innerHTML = buy?Math.round(buy).toLocaleString():'N/A';
+        document.getElementById('sellPriceVal').innerHTML = sell?Math.round(sell).toLocaleString():'N/A';
+        document.getElementById('spreadVal').innerHTML = spread>0?`${Math.round(spread).toLocaleString()} (${spreadPercent.toFixed(1)}%)`:'N/A';
+        document.getElementById('lastUpdate').innerHTML = `${nowStr} UTC`;
+    } else {
+        document.getElementById('selectedItemName').innerText = item;
+        ['buyPriceVal','sellPriceVal','spreadVal'].forEach(id=>document.getElementById(id).innerHTML='No data');
+        document.getElementById('lastUpdate').innerHTML = `${nowStr} UTC`;
+    }
+}
+
+function startAutoRefresh() {
+    if (refreshInterval) clearInterval(refreshInterval);
+    refreshInterval = setInterval(()=>{
+        refreshCountdown--;
+        document.getElementById('countdownTimer').innerText = `${refreshCountdown}s`;
+        if (refreshCountdown<=0) { refreshMarketData(); refreshCountdown=45; }
+    }, 1000);
+}
+
+function setupMarketAutocomplete() {
+    const input = document.getElementById('itemSearch');
+    const dropdown = document.getElementById('autocompleteDropdown');
+    input.addEventListener('input',(e)=>{
+        const val = e.target.value;
+        if (!val.trim()) { dropdown.style.display='none'; return; }
+        const matches = ALL_ITEMS.filter(i=>i.toLowerCase().includes(val.toLowerCase())).slice(0,25);
+        if (matches.length) {
+            dropdown.innerHTML = matches.map(m=>`<div class="autocomplete-item">${m}</div>`).join('');
+            dropdown.style.display='block';
+            dropdown.querySelectorAll('.autocomplete-item').forEach(el=>{
+                el.addEventListener('click',()=>{ input.value=el.innerText; dropdown.style.display='none'; refreshMarketData(); });
+            });
+        } else dropdown.style.display='none';
+    });
+    document.addEventListener('click',(e)=>{
+        if (!input.contains(e.target)&&!dropdown.contains(e.target)) dropdown.style.display='none';
+    });
+}
+
+// ============================================================
+// PART 2 — CRAFTING PLANNER
+// ============================================================
+
+function buildItemDatabase() {
+    const items = [];
+
+    function materialsForTier(tier, primary, secondary=null, tertiary=null) {
+        const mats = [];
+        const qtyBase = Math.floor(2+(tier-2)*1.2);
+        mats.push({name:`T${tier} ${primary}`, qty:qtyBase, price:300+tier*150});
+        if (secondary) mats.push({name:`T${tier} ${secondary}`, qty:Math.floor(qtyBase*0.6), price:250+tier*120});
+        if (tertiary) mats.push({name:`T${tier} ${tertiary}`, qty:Math.floor(qtyBase*0.4), price:200+tier*100});
+        return mats;
+    }
+
+    const weaponTypes = ["Sword","Axe","Mace","Hammer","Crossbow","Bow","Spear","Dagger","Quarterstaff","Gloves","Fire Staff","Frost Staff","Arcane Staff","Holy Staff","Nature Staff","Cursed Staff"];
+    for (let tier=2;tier<=8;tier++) {
+        for (const type of weaponTypes) {
+            let primary,secondary,tertiary;
+            if (type.includes("Staff")) { primary="Metal Bar"; secondary="Planks"; tertiary="Cloth"; }
+            else if (type.includes("Bow")) { primary="Planks"; secondary="Leather"; }
+            else if (type.includes("Dagger")||type.includes("Gloves")) { primary="Metal Bar"; secondary="Leather"; }
+            else if (["Sword","Axe","Mace","Hammer"].some(w=>type.includes(w))) { primary="Metal Bar"; secondary="Planks"; }
+            else if (type.includes("Crossbow")) { primary="Metal Bar"; secondary="Planks"; tertiary="Leather"; }
+            else { primary="Metal Bar"; secondary="Planks"; }
+            const prefixes = {2:"Novice's",3:"Adept's",4:"Expert's",5:"Master's",6:"Grandmaster's",7:"Elder's"};
+            const name = prefixes[tier]?`${prefixes[tier]} ${type}`:`T${tier} ${type}`;
+            items.push({name,category:"Weapons",tier,materials:materialsForTier(tier,primary,secondary,tertiary)});
+        }
+    }
+
+    const armorTypes = ["Plate","Leather","Cloth"];
+    const armorSlots = ["Helmet","Armor","Boots"];
+    for (let tier=2;tier<=8;tier++) {
+        for (const type of armorTypes) {
+            for (const slot of armorSlots) {
+                let primary,secondary,tertiary;
+                if (type==="Plate") { primary="Metal Bar"; secondary="Leather"; tertiary="Cloth"; }
+                else if (type==="Leather") { primary="Leather"; secondary="Cloth"; tertiary="Metal Bar"; }
+                else { primary="Cloth"; secondary="Leather"; tertiary="Metal Bar"; }
+                const prefixes = {2:"Novice's",3:"Adept's",4:"Expert's",5:"Master's",6:"Grandmaster's",7:"Elder's"};
+                const name = prefixes[tier]?`${prefixes[tier]} ${type} ${slot}`:`T${tier} ${type} ${slot}`;
+                items.push({name,category:`${type} Armor`,tier,materials:materialsForTier(tier,primary,secondary,tertiary)});
+            }
+        }
+    }
+
+    const gatheringSets = [
+        {name:"Miner",primary:"Metal Bar",secondary:"Leather"},
+        {name:"Lumberjack",primary:"Planks",secondary:"Leather"},
+        {name:"Quarrier",primary:"Stone Block",secondary:"Leather"},
+        {name:"Skinner",primary:"Leather",secondary:"Cloth"},
+        {name:"Fisherman",primary:"Cloth",secondary:"Leather"}
+    ];
+    for (let tier=4;tier<=8;tier++) {
+        for (const set of gatheringSets) {
+            items.push({name:`T${tier} ${set.name} Jacket`,category:"Gathering Gear",tier,materials:materialsForTier(tier,set.primary,set.secondary)});
+        }
+    }
+
+    const mountList = [
+        {name:"Ox",tier:3,primary:"Leather",secondary:"Metal Bar"},
+        {name:"Horse",tier:4,primary:"Leather",secondary:"Cloth"},
+        {name:"Swiftclaw",tier:5,primary:"Leather",secondary:"Metal Bar"},
+        {name:"Direwolf",tier:6,primary:"Leather",secondary:"Metal Bar"},
+        {name:"Armored Horse",tier:6,primary:"Metal Bar",secondary:"Leather"},
+        {name:"Saddled Boar",tier:7,primary:"Leather",secondary:"Planks"}
+    ];
+    for (const mount of mountList) {
+        items.push({name:`T${mount.tier} ${mount.name}`,category:"Mounts",tier:mount.tier,materials:materialsForTier(mount.tier,mount.primary,mount.secondary)});
+    }
+
+    const potions = ["Healing Potion","Poison Potion","Energy Potion","Resistance Potion"];
+    const foods = ["Beef Stew","Omelette","Pork Omelette","Sandwich","Fish Pie"];
+    for (let tier=3;tier<=8;tier++) {
+        for (const pot of potions) {
+            items.push({name:`T${tier} ${pot}`,category:"Consumables",tier,materials:materialsForTier(tier,"Herb","Glass")});
+        }
+        for (const food of foods) {
+            items.push({name:`T${tier} ${food}`,category:"Consumables",tier,materials:materialsForTier(tier,"Food Ingredient","Vegetable")});
+        }
+    }
+
+    const toolNames = ["Pickaxe","Axe","Sickle","Skinning Knife","Fishing Rod"];
+    for (let tier=2;tier<=8;tier++) {
+        for (const tool of toolNames) {
+            items.push({name:`T${tier} ${tool}`,category:"Tools",tier,materials:materialsForTier(tier,"Metal Bar","Planks")});
+        }
+    }
+
+    return items;
+}
+
+const ITEMS_DB = buildItemDatabase();
+console.log(`✅ Crafting planner loaded ${ITEMS_DB.length} items`);
+
+let batches = [];
+let nextBatchId = 1;
+let globalLeftovers = {};
+
+function getRRRFromPreset(preset) {
+    const presets = {none:0,city_only:0.15,focus_only:0.20,city_focus:0.39,hideout_focus:0.53};
+    return presets[preset]||0;
+}
+
+function craftBatch(batch, useLeftovers=false) {
+    const rrr = batch.rrr;
+    const quantity = batch.quantity;
+    let leftoverUsage = useLeftovers?{...globalLeftovers}:{};
+    let totalCost = 0;
+    const leftoversReturned = {};
+    const materialUsage = [];
+
+    for (let mat of batch.materials) {
+        const totalNeeded = mat.qty*quantity;
+        let remainingNeeded = totalNeeded;
+        let usedFromLeftover = 0;
+        if (useLeftovers&&leftoverUsage[mat.name]&&leftoverUsage[mat.name]>0) {
+            usedFromLeftover = Math.min(remainingNeeded,leftoverUsage[mat.name]);
+            remainingNeeded -= usedFromLeftover;
+            leftoverUsage[mat.name] -= usedFromLeftover;
+        }
+        const purchased = remainingNeeded;
+        totalCost += purchased*mat.price;
+        const returned = Math.floor(totalNeeded*rrr);
+        if (returned>0) leftoversReturned[mat.name]=(leftoversReturned[mat.name]||0)+returned;
+        materialUsage.push({name:mat.name,totalNeeded,purchased,usedLeftover:usedFromLeftover,returned});
+    }
+
+    if (useLeftovers) {
+        for (let mat of batch.materials) {
+            const used = materialUsage.find(m=>m.name===mat.name)?.usedLeftover||0;
+            if (used>0) {
+                globalLeftovers[mat.name]=(globalLeftovers[mat.name]||0)-used;
+                if (globalLeftovers[mat.name]<=0) delete globalLeftovers[mat.name];
+            }
+        }
+    }
+    for (let [name,qty] of Object.entries(leftoversReturned)) {
+        globalLeftovers[name]=(globalLeftovers[name]||0)+qty;
+    }
+
+    const revenue = batch.sellPrice*quantity;
+    const profit = revenue-totalCost;
+    return {totalCost,revenue,profit,leftoversReturned,materialUsage,rrr};
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]||m));
+}
+
+function renderBatches() {
+    const container = document.getElementById('batchesContainer');
+    container.innerHTML = '';
+    batches.forEach((batch,idx)=>{
+        const batchDiv = document.createElement('div');
+        batchDiv.className = 'batch-card';
+        batchDiv.innerHTML = `
+            <div class="batch-header">
+                <div class="batch-title">
+                    <span>📦 Batch #${batch.id}</span>
+                    <input type="text" value="${escapeHtml(batch.itemName)}" data-idx="${idx}" data-field="itemName" class="batch-name-input">
+                </div>
+                <div class="batch-controls">
+                    <button class="btn" data-action="selectItem" data-idx="${idx}" style="background:#2a5a7a;">🔍 Change Item</button>
+                    <button class="btn btn-danger" data-action="deleteBatch" data-idx="${idx}">Delete</button>
+                </div>
+            </div>
+            <div class="batch-grid">
+                <div class="info-card">
+                    <label>Quantity</label>
+                    <input type="number" value="${batch.quantity}" data-idx="${idx}" data-field="quantity" min="1">
+                </div>
+                <div class="info-card">
+                    <label>Sell Price (per item)</label>
+                    <input type="number" value="${batch.sellPrice}" data-idx="${idx}" data-field="sellPrice" step="1000">
+                </div>
+                <div class="info-card">
+                    <label>RRR Preset</label>
+                    <select data-idx="${idx}" data-field="rrrPreset">
+                        <option value="none" ${batch.rrrPreset==='none'?'selected':''}>No Bonus (0%)</option>
+                        <option value="city_only" ${batch.rrrPreset==='city_only'?'selected':''}>City Bonus Only (15%)</option>
+                        <option value="focus_only" ${batch.rrrPreset==='focus_only'?'selected':''}>Focus Only (20%)</option>
+                        <option value="city_focus" ${batch.rrrPreset==='city_focus'?'selected':''}>City + Focus (39%)</option>
+                        <option value="hideout_focus" ${batch.rrrPreset==='hideout_focus'?'selected':''}>Hideout + Focus (53%)</option>
+                    </select>
+                </div>
+                <div class="info-card">
+                    <label>Manual RRR % (overrides preset)</label>
+                    <input type="number" value="${batch.manualRRR!==null?batch.manualRRR:''}" data-idx="${idx}" data-field="manualRRR" placeholder="Auto" step="1" min="0" max="60">
+                </div>
+            </div>
+            <div class="inline-check">
+                <input type="checkbox" data-idx="${idx}" data-field="useLeftovers" ${batch.useLeftovers?'checked':''}>
+                <label>♻️ Use available leftovers for this batch (reduces cost)</label>
+            </div>
+            <table class="material-table">
+                <thead><tr><th>Material</th><th>Qty/craft</th><th>Price/unit</th><th>Total (${batch.quantity} crafts)</th><th></th></tr></thead>
+                <tbody>
+                    ${batch.materials.map((mat,midx)=>`
+                        <tr>
+                            <td><input type="text" value="${escapeHtml(mat.name)}" data-idx="${idx}" data-midx="${midx}" data-field="name"></td>
+                            <td><input type="number" value="${mat.qty}" data-idx="${idx}" data-midx="${midx}" data-field="qty" style="width:80px"></td>
+                            <td><input type="number" value="${mat.price}" data-idx="${idx}" data-midx="${midx}" data-field="price" style="width:100px"></td>
+                            <td>${(mat.qty*batch.quantity).toLocaleString()} pcs</td>
+                            <td><button class="btn delete-material" data-idx="${idx}" data-midx="${midx}" style="background:#8b3a3a;padding:2px 8px;">✖</button></td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+            <button class="btn planner-add-mat-btn" data-action="addMaterial" data-idx="${idx}">+ Add Material</button>
+            <button class="btn craft-btn" data-action="craft" data-idx="${idx}">🔨 Craft This Batch</button>
+            <div id="batch-result-${idx}" class="leftovers-section" style="display:none;"></div>
+            <div class="batch-footer">
+                <div>💰 Est. Profit (pre-craft): <span id="est-profit-${idx}">0</span></div>
+                <button class="btn btn-info" data-action="calculate" data-idx="${idx}" style="padding:4px 12px;">📊 Calculate</button>
+            </div>
+        `;
+        container.appendChild(batchDiv);
+    });
+    attachBatchEvents();
+    calculateAllEstimates();
+}
+
+function attachBatchEvents() {
+    document.querySelectorAll('#batchesContainer [data-field]').forEach(el=>{
+        el.addEventListener('change', handleFieldChange);
+    });
+    document.querySelectorAll('.delete-material').forEach(btn=>{
+        btn.addEventListener('click', handleDeleteMaterial);
+    });
+    document.querySelectorAll('[data-action="craft"]').forEach(btn=>{
+        btn.addEventListener('click', handleCraft);
+    });
+    document.querySelectorAll('[data-action="calculate"]').forEach(btn=>{
+        btn.addEventListener('click', handleCalculate);
+    });
+    document.querySelectorAll('[data-action="deleteBatch"]').forEach(btn=>{
+        btn.addEventListener('click', handleDeleteBatch);
+    });
+    document.querySelectorAll('[data-action="selectItem"]').forEach(btn=>{
+        btn.addEventListener('click', handleSelectItem);
+    });
+    document.querySelectorAll('[data-action="addMaterial"]').forEach(btn=>{
+        btn.addEventListener('click', handleAddMaterial);
+    });
+    document.querySelectorAll('.batch-name-input').forEach(input=>{
+        input.addEventListener('change', handleNameChange);
+    });
+}
+
+function handleFieldChange(e) {
+    const idx = parseInt(e.target.dataset.idx);
+    const field = e.target.dataset.field;
+    if (isNaN(idx)||!batches[idx]) return;
+    if (field==='quantity') batches[idx].quantity=parseInt(e.target.value)||1;
+    else if (field==='sellPrice') batches[idx].sellPrice=parseFloat(e.target.value)||0;
+    else if (field==='rrrPreset') {
+        batches[idx].rrrPreset=e.target.value;
+        batches[idx].rrr=getRRRFromPreset(batches[idx].rrrPreset);
+        if (batches[idx].manualRRR!==null) batches[idx].rrr=batches[idx].manualRRR/100;
+    } else if (field==='manualRRR') {
+        const val = e.target.value;
+        batches[idx].manualRRR=val?parseFloat(val):null;
+        batches[idx].rrr=batches[idx].manualRRR!==null?batches[idx].manualRRR/100:getRRRFromPreset(batches[idx].rrrPreset);
+    } else if (field==='useLeftovers') batches[idx].useLeftovers=e.target.checked;
+    else if (field==='name') batches[idx].itemName=e.target.value;
+    else if (field==='qty') {
+        const midx=parseInt(e.target.dataset.midx);
+        if (!isNaN(midx)&&batches[idx].materials[midx]) batches[idx].materials[midx].qty=parseFloat(e.target.value)||0;
+    } else if (field==='price') {
+        const midx=parseInt(e.target.dataset.midx);
+        if (!isNaN(midx)&&batches[idx].materials[midx]) batches[idx].materials[midx].price=parseFloat(e.target.value)||0;
+    }
+    calculateBatchEstimate(idx);
+    renderBatches();
+}
+
+function handleDeleteMaterial(e) {
+    const idx=parseInt(e.target.dataset.idx), midx=parseInt(e.target.dataset.midx);
+    if (!isNaN(idx)&&!isNaN(midx)&&batches[idx]) {
+        batches[idx].materials.splice(midx,1);
+        renderBatches();
+    }
+}
+
+function handleAddMaterial(e) {
+    const idx=parseInt(e.target.dataset.idx);
+    if (!isNaN(idx)&&batches[idx]) {
+        batches[idx].materials.push({name:"New Material",qty:1,price:1000});
+        renderBatches();
+    }
+}
+
+function handleNameChange(e) {
+    const idx=parseInt(e.target.dataset.idx);
+    if (!isNaN(idx)&&batches[idx]) batches[idx].itemName=e.target.value;
+}
+
+function handleDeleteBatch(e) {
+    const idx=parseInt(e.target.dataset.idx);
+    if (!isNaN(idx)) { batches.splice(idx,1); renderBatches(); }
+}
+
+function handleSelectItem(e) {
+    const idx=parseInt(e.target.dataset.idx);
+    if (!isNaN(idx)&&batches[idx]) { selectedBatchToAdd=idx; openItemModal(); }
+}
+
+function handleCraft(e) {
+    const idx=parseInt(e.target.dataset.idx);
+    if (isNaN(idx)||!batches[idx]) return;
+    const batch = batches[idx];
+    const result = craftBatch(batch, batch.useLeftovers);
+    const resultDiv = document.getElementById(`batch-result-${idx}`);
+    if (resultDiv) {
+        resultDiv.style.display='block';
+        let usageHtml='';
+        if (batch.useLeftovers) {
+            usageHtml='<br>📦 Leftovers used:<br>';
+            for (let mu of result.materialUsage) {
+                if (mu.usedLeftover>0) usageHtml+=`&nbsp;&nbsp;${mu.usedLeftover}x ${mu.name}<br>`;
+            }
+        }
+        resultDiv.innerHTML = `
+            <strong>✅ Crafted ${batch.quantity}x ${escapeHtml(batch.itemName)}</strong><br>
+            💰 Total Cost (purchased): ${Math.round(result.totalCost).toLocaleString()} silver<br>
+            📈 Revenue: ${Math.round(result.revenue).toLocaleString()} silver<br>
+            🎯 Profit: <span class="${result.profit>=0?'profit-positive':'profit-negative'}">${Math.round(result.profit).toLocaleString()}</span> silver<br>
+            🔄 RRR Used: ${(result.rrr*100).toFixed(1)}%<br>
+            📦 Returned Materials: ${Object.entries(result.leftoversReturned).map(([k,v])=>`${v}x ${k}`).join(', ')||'None'}${usageHtml}
+        `;
+    }
+    renderGlobalLeftovers();
+    renderBatches();
+}
+
+function handleCalculate(e) {
+    const idx=parseInt(e.target.dataset.idx);
+    calculateBatchEstimate(idx);
+}
+
+function calculateBatchEstimate(idx) {
+    const batch = batches[idx];
+    if (!batch) return;
+    const result = craftBatch(batch, false);
+    const estSpan = document.getElementById(`est-profit-${idx}`);
+    if (estSpan) {
+        estSpan.innerHTML = `<span class="${result.profit>=0?'profit-positive':'profit-negative'}">${Math.round(result.profit).toLocaleString()}</span> silver`;
+    }
+}
+
+function calculateAllEstimates() {
+    batches.forEach((_,idx)=>calculateBatchEstimate(idx));
+}
+
+function renderGlobalLeftovers() {
+    const container = document.getElementById('globalLeftovers');
+    if (!container) return;
+    const entries = Object.entries(globalLeftovers);
+    if (entries.length===0) {
+        container.innerHTML='<span style="color:#8f9bb3;">No leftover materials yet. Craft something!</span>';
+        return;
+    }
+    container.innerHTML = entries.map(([name,qty])=>`<div class="leftover-badge">${qty}x ${name}</div>`).join('');
+}
+
+// ---- Item Modal ----
+let selectedBatchToAdd = null;
+
+function openItemModal() {
+    const modal = document.getElementById('itemModal');
+    modal.style.display='flex';
+    renderItemList('');
+    document.getElementById('searchItemsInput').value='';
+    document.getElementById('searchItemsInput').focus();
+}
+
+function renderItemList(filter, categoryFilter='All') {
+    const container = document.getElementById('itemListContainer');
+    let filtered = ITEMS_DB.filter(item=>item.name.toLowerCase().includes(filter.toLowerCase()));
+    if (categoryFilter!=='All') filtered=filtered.filter(item=>item.category===categoryFilter);
+    container.innerHTML = filtered.map(item=>`
+        <div class="item-entry" data-item-name="${escapeHtml(item.name)}" data-item-materials='${JSON.stringify(item.materials)}'>
+            <div><span class="item-name">${escapeHtml(item.name)}</span><br><span class="item-category">${item.category} · T${item.tier}</span></div>
+            <div>🔨 Select</div>
+        </div>
+    `).join('');
+    document.querySelectorAll('.item-entry').forEach(el=>{
+        el.addEventListener('click',()=>{
+            const itemName = el.dataset.itemName;
+            const materials = JSON.parse(el.dataset.itemMaterials);
+            if (selectedBatchToAdd!==null&&batches[selectedBatchToAdd]) {
+                batches[selectedBatchToAdd].itemName=itemName;
+                batches[selectedBatchToAdd].materials=materials.map(m=>({...m}));
+                renderBatches();
+            } else if (selectedBatchToAdd===null) {
+                addNewBatch(itemName, materials);
+            }
+            document.getElementById('itemModal').style.display='none';
+            selectedBatchToAdd=null;
+        });
+    });
+}
+
+function addNewBatch(itemName, materials) {
+    batches.push({
+        id:nextBatchId++,
+        itemName,
+        quantity:10,
+        sellPrice:25000,
+        rrrPreset:"city_focus",
+        rrr:0.39,
+        manualRRR:null,
+        useLeftovers:false,
+        materials:materials.map(m=>({...m}))
+    });
+    renderBatches();
+}
+
+function addBatchFromLeftovers() {
+    if (Object.keys(globalLeftovers).length===0) {
+        alert('No leftovers available. Craft something first!');
+        return;
+    }
+    const leftoverMaterials = Object.entries(globalLeftovers).map(([name,qty])=>({name,qty:Math.min(qty,5),price:0}));
+    batches.push({
+        id:nextBatchId++,
+        itemName:'Craft from Leftovers',
+        quantity:5,
+        sellPrice:20000,
+        rrrPreset:"city_focus",
+        rrr:0.39,
+        manualRRR:null,
+        useLeftovers:true,
+        materials:leftoverMaterials
+    });
+    renderBatches();
+}
+
+// ============================================================
+// MULTI-BATCH REFINING
+// ============================================================
+let refineBatches = [];
+let nextRBId = 1;
+
+function getRefineBatchSettings() {
+    const override = document.getElementById('refineOverrideToggle').checked;
+    let cityReturn = 0;
+    if (override) {
+        cityReturn = parseFloat(document.getElementById('refineCustomPercent').value) / 100 || 0;
+    } else {
+        const resource = document.getElementById('refineResourceSelect').value;
+        const city = document.getElementById('refineCitySelect').value;
+        cityReturn = getCityReturnRate(resource, city);
+    }
+    const focusBonus = document.getElementById('focusToggle').checked ? 0.15 : 0;
+    const totalReturn = Math.min(cityReturn + focusBonus, 0.45);
+    const enchantValue = refineMultipliers[selectedRefineEnchant];
+    return { totalReturn, enchantValue, baseValuePerUnit: 85, rawCostPerUnit: 42 };
+}
+
+function calcOneRefineBatch(rbId) {
+    const rb = refineBatches.find(r => r.id === rbId);
+    if (!rb) return null;
+    const settings = getRefineBatchSettings();
+
+    const rawQty = rb.rawQty;
+    const rawPrice = rb.rawPrice;
+    const sellPrice = rb.sellPrice;
+
+    const returnAmount = rawQty * settings.totalReturn;
+    const refinedOutput = rawQty * 0.85 + returnAmount;
+    const totalValue = sellPrice > 0
+        ? refinedOutput * sellPrice
+        : refinedOutput * settings.baseValuePerUnit * settings.enchantValue;
+    const rawCost = rawPrice > 0 ? rawQty * rawPrice : rawQty * settings.rawCostPerUnit;
+    const profit = totalValue - rawCost;
+    const profitMargin = rawCost > 0 ? (profit / rawCost) * 100 : 0;
+
+    return { rawQty, refinedOutput: Math.floor(refinedOutput), totalValue: Math.floor(totalValue), rawCost: Math.floor(rawCost), profit: Math.floor(profit), profitMargin };
+}
+
+function renderRefineBatches() {
+    const container = document.getElementById('refineBatchContainer');
+    const totalDiv = document.getElementById('refineBatchTotal');
+    if (!container) return;
+
+    if (refineBatches.length === 0) {
+        container.innerHTML = '<div style="font-size:0.78rem;color:var(--text-muted);padding:0.5rem 0;">No refine batches yet. Click "+ Add Batch" to start.</div>';
+        totalDiv.style.display = 'none';
+        return;
+    }
+
+    container.innerHTML = refineBatches.map(rb => {
+        const res = calcOneRefineBatch(rb.id);
+        const profitColor = res && res.profit >= 0 ? 'var(--profit)' : 'var(--loss)';
+        const profitStr = res ? `${res.profit.toLocaleString()} silver (${res.profitMargin.toFixed(1)}%)` : '—';
+        return `
+        <div class="refine-batch-item" id="rbi-${rb.id}">
+            <div>
+                <label>📦 Resource / Label</label>
+                <input type="text" value="${escapeHtml(rb.label)}" placeholder="e.g. T6 Ore" oninput="updateRefineBatchField(${rb.id},'label',this.value)" style="width:100%;">
+            </div>
+            <div>
+                <label>🔢 Raw Quantity</label>
+                <input type="number" value="${rb.rawQty}" min="1" oninput="updateRefineBatchField(${rb.id},'rawQty',+this.value);renderRefineBatches();" style="width:100%;">
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
+                <div>
+                    <label>💰 Raw Price/unit</label>
+                    <input type="number" value="${rb.rawPrice}" placeholder="0 = auto" min="0" oninput="updateRefineBatchField(${rb.id},'rawPrice',+this.value);renderRefineBatches();" style="width:100%;">
+                </div>
+                <div>
+                    <label>💸 Sell Price/unit</label>
+                    <input type="number" value="${rb.sellPrice}" placeholder="0 = auto" min="0" oninput="updateRefineBatchField(${rb.id},'sellPrice',+this.value);renderRefineBatches();" style="width:100%;">
+                </div>
+            </div>
+            <div style="text-align:right;">
+                <div class="refine-batch-result">
+                    <div>📤 Output: <strong>${res ? res.refinedOutput.toLocaleString() : '—'}</strong></div>
+                    <div>Revenue: ${res ? res.totalValue.toLocaleString() : '—'}</div>
+                    <div class="rb-profit" style="color:${profitColor};">Profit: ${profitStr}</div>
+                </div>
+                <button class="btn btn-danger" onclick="removeRefineBatch(${rb.id})" style="padding:3px 10px;font-size:0.7rem;margin-top:6px;">✖</button>
+            </div>
+        </div>`;
+    }).join('');
+
+    // Totals
+    let totalRaw = 0, totalRefined = 0, totalRevenue = 0, totalCost = 0, totalProfit = 0;
+    refineBatches.forEach(rb => {
+        const res = calcOneRefineBatch(rb.id);
+        if (res) {
+            totalRaw += rb.rawQty;
+            totalRefined += res.refinedOutput;
+            totalRevenue += res.totalValue;
+            totalCost += res.rawCost;
+            totalProfit += res.profit;
+        }
+    });
+    const totalMargin = totalCost > 0 ? (totalProfit / totalCost) * 100 : 0;
+    totalDiv.style.display = 'grid';
+    totalDiv.innerHTML = `
+        <div><div class="rts-label">📦 Total Raw</div><div class="rts-val">${totalRaw.toLocaleString()}</div></div>
+        <div><div class="rts-label">📤 Total Refined</div><div class="rts-val">${totalRefined.toLocaleString()}</div></div>
+        <div><div class="rts-label">💰 Total Revenue</div><div class="rts-val">${totalRevenue.toLocaleString()}</div></div>
+        <div><div class="rts-label">💸 Total Cost</div><div class="rts-val">${totalCost.toLocaleString()}</div></div>
+        <div><div class="rts-label">📊 Total Profit</div><div class="rts-val" style="color:${totalProfit >= 0 ? 'var(--profit)' : 'var(--loss)'}">${totalProfit.toLocaleString()}<br><span style="font-size:0.7rem;">(${totalMargin.toFixed(1)}%)</span></div></div>
+        <div><div class="rts-label">🔢 Batches</div><div class="rts-val">${refineBatches.length}</div></div>
+    `;
+}
+
+function updateRefineBatchField(id, field, val) {
+    const rb = refineBatches.find(r => r.id === id);
+    if (rb) rb[field] = val;
+}
+
+function addRefineBatch(labelOverride) {
+    const resourceSelect = document.getElementById('refineResourceSelect');
+    refineBatches.push({
+        id: nextRBId++,
+        label: labelOverride || (resourceSelect ? resourceSelect.value : 'Resource'),
+        rawQty: parseInt(document.getElementById('rawQty')?.value) || 1000,
+        rawPrice: 0,
+        sellPrice: 0
+    });
+    renderRefineBatches();
+}
+
+function removeRefineBatch(id) {
+    refineBatches = refineBatches.filter(r => r.id !== id);
+    renderRefineBatches();
+}
+
+// ============================================================
+// TRANSPORTATION TIMER TRACKER
+// ============================================================
+let transportTimers = [];
+let nextTimerId = 1;
+let transportTickInterval = null;
+
+const TRANSPORT_PRESETS = {
+    oxcart: { label: '🐂 Oxcart', seconds: 8 * 60 },
+    horse:  { label: '🐴 Horse',  seconds: 5 * 60 },
+    laborer:{ label: '📦 Laborer',seconds: 15 * 60 },
+    custom: { label: '⏱️ Custom',  seconds: null }
+};
+
+function getTransportDuration() {
+    const type = document.getElementById('timerTypeSelect').value;
+    if (type === 'custom') {
+        const mins = parseFloat(document.getElementById('timerCustomMinutes').value) || 10;
+        return Math.round(mins * 60);
+    }
+    return TRANSPORT_PRESETS[type].seconds;
+}
+
+function formatCountdown(secs) {
+    if (secs <= 0) return '✅ ARRIVED';
+    const m = Math.floor(secs / 60);
+    const s = secs % 60;
+    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
+
+function renderTransportTimers() {
+    const grid = document.getElementById('transportGrid');
+    if (!grid) return;
+
+    // Remove old timer cards (keep addPanel at end)
+    grid.querySelectorAll('.transport-timer-card').forEach(el => el.remove());
+
+    // Insert timer cards before the add panel
+    const addPanel = document.getElementById('addTimerPanel');
+
+    transportTimers.forEach(t => {
+        const elapsed = Math.floor((Date.now() - t.startTime) / 1000);
+        const remaining = Math.max(t.duration - elapsed, 0);
+        const done = remaining === 0;
+        const pct = Math.min((elapsed / t.duration) * 100, 100);
+        const urgent = remaining > 0 && remaining <= (t.alertAt || 60);
+
+        const card = document.createElement('div');
+        card.className = `transport-timer-card${done ? ' done' : (urgent ? ' warning' : '')}`;
+        card.id = `ttcard-${t.id}`;
+
+        const statusTag = done
+            ? '<span class="transport-tag tag-done">✅ ARRIVED</span>'
+            : (urgent ? '<span class="transport-tag tag-waiting">⚠️ NEAR</span>' : '<span class="transport-tag tag-transit">🚚 IN TRANSIT</span>');
+
+        card.innerHTML = `
+            <div class="transport-header">
+                <div class="transport-route">
+                    🏙️ ${escapeHtml(t.from)} → ${escapeHtml(t.to)}
+                    ${statusTag}
+                </div>
+                <div style="display:flex;gap:5px;">
+                    ${!done ? `<button class="btn" onclick="restartTimer(${t.id})" style="padding:3px 9px;font-size:0.68rem;background:#2a3a5a;">↺ Reset</button>` : ''}
+                    <button class="btn btn-danger" onclick="removeTimer(${t.id})" style="padding:3px 9px;font-size:0.68rem;">✖</button>
+                </div>
+            </div>
+            <div class="transport-route" style="margin-bottom:0.3rem;font-size:0.78rem;color:var(--text-secondary);">
+                📦 ${escapeHtml(t.cargo)}${t.notes ? ` · ${escapeHtml(t.notes)}` : ''}
+            </div>
+            <div class="transport-countdown${done ? ' done' : (urgent ? ' urgent' : '')}" id="ttcount-${t.id}">
+                ${formatCountdown(remaining)}
+            </div>
+            <div class="transport-progress">
+                <div class="transport-progress-bar" id="ttpbar-${t.id}" style="width:${pct}%;"></div>
+            </div>
+            <div class="transport-meta">
+                <span>${TRANSPORT_PRESETS[t.type]?.label || '⏱️ Custom'} · ${Math.round(t.duration / 60)}min</span>
+                <span>Started: ${new Date(t.startTime).toUTCString().slice(17, 25)} UTC</span>
+                <span>ETA: ${new Date(t.startTime + t.duration * 1000).toUTCString().slice(17, 25)} UTC</span>
+            </div>
+        `;
+
+        grid.insertBefore(card, addPanel);
+    });
+}
+
+function tickTransportTimers() {
+    transportTimers.forEach(t => {
+        const elapsed = Math.floor((Date.now() - t.startTime) / 1000);
+        const remaining = Math.max(t.duration - elapsed, 0);
+        const done = remaining === 0;
+        const pct = Math.min((elapsed / t.duration) * 100, 100);
+        const urgent = remaining > 0 && remaining <= (t.alertAt || 60);
+
+        const countEl = document.getElementById(`ttcount-${t.id}`);
+        const barEl = document.getElementById(`ttpbar-${t.id}`);
+        const card = document.getElementById(`ttcard-${t.id}`);
+
+        if (countEl) countEl.textContent = formatCountdown(remaining);
+        if (barEl) barEl.style.width = pct + '%';
+
+        if (card) {
+            card.className = `transport-timer-card${done ? ' done' : (urgent ? ' warning' : '')}`;
+            if (countEl) {
+                countEl.className = `transport-countdown${done ? ' done' : (urgent ? ' urgent' : '')}`;
+            }
+        }
+
+        // First-time done notification
+        if (done && !t._notified) {
+            t._notified = true;
+            showTransportNotification(t);
+        }
+    });
+}
+
+function showTransportNotification(t) {
+    const el = document.createElement('div');
+    el.style.cssText = `position:fixed;bottom:20px;right:20px;background:linear-gradient(135deg,#1a3a2a,#0f2a1a);border:1px solid var(--profit);color:var(--profit);padding:14px 20px;border-radius:14px;font-size:0.9rem;font-weight:bold;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.6);max-width:320px;`;
+    el.innerHTML = `✅ Cargo Arrived!<br><span style="font-size:0.8rem;color:#eee;">📦 ${escapeHtml(t.cargo)}<br>🏙️ ${escapeHtml(t.from)} → ${escapeHtml(t.to)}</span>`;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 6000);
+}
+
+function startTransportTimer() {
+    const cargo = document.getElementById('timerCargoInput').value.trim() || 'Cargo';
+    const from = document.getElementById('timerFromCity').value;
+    const to = document.getElementById('timerToCity').value;
+    const type = document.getElementById('timerTypeSelect').value;
+    const notes = document.getElementById('timerNotes').value.trim();
+    const alertAt = parseInt(document.getElementById('timerAlertAt')?.value) || 60;
+    const duration = getTransportDuration();
+
+    transportTimers.push({
+        id: nextTimerId++,
+        cargo, from, to, type, notes, duration, alertAt,
+        startTime: Date.now(),
+        _notified: false
+    });
+
+    // Reset input
+    document.getElementById('timerCargoInput').value = '';
+    document.getElementById('timerNotes').value = '';
+
+    renderTransportTimers();
+}
+
+function removeTimer(id) {
+    transportTimers = transportTimers.filter(t => t.id !== id);
+    renderTransportTimers();
+}
+
+function restartTimer(id) {
+    const t = transportTimers.find(t => t.id === id);
+    if (t) { t.startTime = Date.now(); t._notified = false; }
+    renderTransportTimers();
+}
+
+function clearDoneTimers() {
+    const elapsed = (t) => Math.floor((Date.now() - t.startTime) / 1000);
+    transportTimers = transportTimers.filter(t => elapsed(t) < t.duration);
+    renderTransportTimers();
+}
+
+function openRefineLinkModal() {
+    const modal = document.getElementById('refineLinkModal');
+    const list = document.getElementById('refineLinkBatchList');
+    modal.style.display = 'flex';
+    if (refineBatches.length === 0) {
+        list.innerHTML = '<div style="color:var(--text-muted);font-size:0.82rem;">No refine batches yet. Add some in the Refining Optimizer.</div>';
+        return;
+    }
+    list.innerHTML = refineBatches.map(rb => `
+        <div style="background:#0f121f;border-radius:10px;padding:10px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;border:1px solid #2e3a55;" onclick="linkTimerToRefineBatch(${rb.id})">
+            <div>
+                <div style="font-weight:bold;font-size:0.85rem;">📦 ${escapeHtml(rb.label)}</div>
+                <div style="font-size:0.72rem;color:var(--text-secondary);">Raw: ${rb.rawQty.toLocaleString()} | Sell: ${rb.sellPrice > 0 ? rb.sellPrice.toLocaleString() : 'auto'}</div>
+            </div>
+            <button class="btn btn-info" style="padding:4px 12px;font-size:0.75rem;">🔗 Link</button>
+        </div>
+    `).join('');
+}
+
+function linkTimerToRefineBatch(rbId) {
+    const rb = refineBatches.find(r => r.id === rbId);
+    if (!rb) return;
+    document.getElementById('timerCargoInput').value = rb.label || 'Refined Goods';
+    document.getElementById('refineLinkModal').style.display = 'none';
+    // Scroll to timer add panel
+    document.getElementById('addTimerPanel').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// ============================================================
+// INIT
+// ============================================================
+function init() {
+    // Clock
+    setInterval(()=>{ document.getElementById('utcClock').innerText=new Date().toISOString().slice(11,19); }, 1000);
+
+    // Populate refining resource select
+    const refineSelect = document.getElementById('refineResourceSelect');
+    RESOURCES.forEach(r=>{ const opt=document.createElement('option'); opt.value=r; opt.innerText=r; refineSelect.appendChild(opt); });
+
+    // Enchant selector
+    document.querySelectorAll('#enchantSelector .enchant-badge').forEach(badge=>{
+        badge.addEventListener('click',()=>{
+            document.querySelectorAll('#enchantSelector .enchant-badge').forEach(b=>b.classList.remove('active'));
+            badge.classList.add('active');
+            selectedRefineEnchant=parseInt(badge.dataset.enchant);
+            updateRefiningCalculation();
+        });
+    });
+    document.querySelector('#enchantSelector .enchant-badge').classList.add('active');
+
+    // Refining events
+    ['calcRefineBtn'].forEach(id=>document.getElementById(id).addEventListener('click',updateRefiningCalculation));
+    ['rawQty','refineCustomPercent'].forEach(id=>document.getElementById(id).addEventListener('input',updateRefiningCalculation));
+    ['refineCitySelect'].forEach(id=>document.getElementById(id).addEventListener('change',updateRefiningCalculation));
+    ['focusToggle','refineOverrideToggle'].forEach(id=>document.getElementById(id).addEventListener('change',updateRefiningCalculation));
+
+    // Market scanner events
+    setupMarketAutocomplete();
+    document.getElementById('citySelect').addEventListener('change',refreshMarketData);
+    document.getElementById('blackMarketToggle').addEventListener('change',refreshMarketData);
+    document.getElementById('forceRefreshBtn').addEventListener('click',()=>{ refreshMarketData(); refreshCountdown=45; });
+    document.getElementById('multiCityBtn').addEventListener('click',async()=>{
+        const item = document.getElementById('itemSearch').value.trim();
+        if (!item) return;
+        const cities = ['Martlock','Lymhurst','Bridgewatch','Thetford','Fort Sterling','Caerleon','Brecilien'];
+        let html = '<div style="font-weight:bold;">🏙️ Multi-City Comparison</div>';
+        for (let c of cities) {
+            const res = await fetchPrices([item],c,false);
+            if (res&&res[0]) html+=`<div>${c}: 💰 ${Math.round(res[0].buy_price_max||0).toLocaleString()} | 💸 ${Math.round(res[0].sell_price_min||0).toLocaleString()}</div>`;
+            else html+=`<div>${c}: No data</div>`;
+        }
+        document.getElementById('multiCityResult').innerHTML=html;
+    });
+
+    // Flipping init
+    addFlippingItem(); addFlippingItem();
+    document.getElementById('addFlippingItemBtn').addEventListener('click',addFlippingItem);
+
+    // Crafting planner events
+    document.getElementById('addBatchBtn').addEventListener('click',()=>{ selectedBatchToAdd=null; openItemModal(); });
+    document.getElementById('addFromLeftoversBtn').addEventListener('click',addBatchFromLeftovers);
+    document.getElementById('clearAllBatchesBtn').addEventListener('click',()=>{ batches=[]; renderBatches(); });
+    document.getElementById('clearLeftoversBtn').addEventListener('click',()=>{ globalLeftovers={}; renderGlobalLeftovers(); renderBatches(); });
+    document.getElementById('closeModalBtn').addEventListener('click',()=>{ document.getElementById('itemModal').style.display='none'; });
+    document.getElementById('searchItemsInput').addEventListener('input',(e)=>{
+        renderItemList(e.target.value, document.querySelector('.category-btn.active')?.dataset.cat||'All');
+    });
+
+    // Category filters for item modal
+    const categories = ['All',...new Set(ITEMS_DB.map(i=>i.category))];
+    const filterDiv = document.getElementById('categoryFilters');
+    filterDiv.innerHTML = categories.map(cat=>`<button class="category-btn ${cat==='All'?'active':''}" data-cat="${cat}">${cat}</button>`).join('');
+    filterDiv.addEventListener('click',(e)=>{
+        if (e.target.classList.contains('category-btn')) {
+            document.querySelectorAll('.category-btn').forEach(btn=>btn.classList.remove('active'));
+            e.target.classList.add('active');
+            renderItemList(document.getElementById('searchItemsInput').value, e.target.dataset.cat);
+        }
+    });
+
+    // Initial render
+    updateRefiningCalculation();
+    refreshMarketData();
+    startAutoRefresh();
+    renderBatches();
+    renderGlobalLeftovers();
+
+    // --- Multi-Batch Refining ---
+    document.getElementById('addRefineBatchBtn').addEventListener('click', () => addRefineBatch());
+    renderRefineBatches();
+    // Re-calc batches whenever main refine settings change
+    ['refineResourceSelect','refineCitySelect'].forEach(id => {
+        document.getElementById(id)?.addEventListener('change', renderRefineBatches);
+    });
+    ['focusToggle','refineOverrideToggle'].forEach(id => {
+        document.getElementById(id)?.addEventListener('change', renderRefineBatches);
+    });
+    document.getElementById('refineCustomPercent')?.addEventListener('input', renderRefineBatches);
+    document.querySelectorAll('#enchantSelector .enchant-badge').forEach(badge => {
+        badge.addEventListener('click', () => setTimeout(renderRefineBatches, 50));
+    });
+
+    // --- Transportation Timers ---
+    document.getElementById('timerTypeSelect')?.addEventListener('change', () => {
+        const isCustom = document.getElementById('timerTypeSelect').value === 'custom';
+        document.getElementById('customDurationRow').style.display = isCustom ? 'grid' : 'none';
+    });
+    document.getElementById('startTimerBtn')?.addEventListener('click', startTransportTimer);
+    document.getElementById('clearDoneTimersBtn')?.addEventListener('click', clearDoneTimers);
+    document.getElementById('clearAllTimersBtn')?.addEventListener('click', () => { transportTimers = []; renderTransportTimers(); });
+    document.getElementById('refineTimerLinkBtn')?.addEventListener('click', openRefineLinkModal);
+    document.getElementById('closeRefineLinkModal')?.addEventListener('click', () => {
+        document.getElementById('refineLinkModal').style.display = 'none';
+    });
+    renderTransportTimers();
+
+    // Start transport tick — every second
+    transportTickInterval = setInterval(() => { tickTransportTimers(); }, 1000);
+    // Re-render card structure every 30s (handles cleanup)
+    setInterval(() => { renderTransportTimers(); }, 30000);
+
+    console.log("✅ v6.1 — Transport Timers + Multi-Batch Refining loaded");
+}
+
+init();
+</script>
+</body>
+</html>
